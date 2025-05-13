@@ -47,6 +47,8 @@ CREATE TABLE USERS (
 	nameUser VARCHAR(40) NOT NULL,
 	firtSurname VARCHAR(40) NOT NULL,
 	lastSurname VARCHAR(40) NOT NULL,
+	mail VARCHAR(100) NOT NULL,
+	phoneNumber CHAR(9) NOT NULL CHECK (phoneNumber NOT LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
 	dateOfBirth DATE NOT NULL CHECK (dateOfBirth <= GETDATE()),
 	isSeller BIT NOT NULL,
 	idDirection INT,
@@ -55,32 +57,35 @@ CREATE TABLE USERS (
 
 );
 
-CREATE TABLE CATEGORY(
+CREATE TABLE CATEGORY (
 
 	idCategory INT IDENTITY PRIMARY KEY,
 	 nameCategory VARCHAR(50) NOT NULL
 );
 
 
-CREATE TABLE TOOL(
+CREATE TABLE TOOL (
 
 	idTool INT IDENTITY PRIMARY KEY,
 	nameTool VARCHAR(100) NOT NULL,
 	stock SMALLINT NOT NULL CHECK (stock >= 0),
 	idCategory INT,
-	
+	pricePerDay MONEY NOT NULL,
+
+	CHECK (pricePerDay > 0),
+
 	FOREIGN KEY (idCategory) REFERENCES CATEGORY(idCategory)
 
 );
 
-CREATE TABLE PAYMETHOD(
+CREATE TABLE PAYMETHOD (
 
 	idPaymethod INT IDENTITY PRIMARY KEY,
 	namePaymethod VARCHAR(50)
 
 );
 
-CREATE TABLE ORDERS(
+CREATE TABLE ORDERS (
 
 	idOrder INT IDENTITY PRIMARY KEY,
 	idUser INT,
@@ -90,8 +95,10 @@ CREATE TABLE ORDERS(
 	Quantity SMALLINT NOT NULL CHECK (Quantity > 0),
 	reservationStart DATE NOT NULL,
 	reservationEnd DATE NOT NULL,
+	orderStatus VARCHAR(9) NOT NULL DEFAULT 'New',
 
 	CHECK (reservationEnd > reservationStart),
+	CHECK (orderStatus IN ('New','Paid','Cancelled','Sended','Returned','Closed')),
 
 	FOREIGN KEY (idUser) REFERENCES USERS(idUser),
 	FOREIGN KEY (idTool) REFERENCES TOOL(idTool),
@@ -99,7 +106,8 @@ CREATE TABLE ORDERS(
 
 );
 
-CREATE TABLE DELIVERY(
+
+CREATE TABLE DELIVERY (
 
 	idDelivery INT IDENTITY PRIMARY KEY,
 	idOrder INT,
@@ -114,7 +122,7 @@ CREATE TABLE DELIVERY(
 
 );
 
-CREATE TABLE ASSESSMENT(
+CREATE TABLE ASSESSMENT (
 
 	idAssessment INT IDENTITY PRIMARY KEY,
 	idOrder INT,
