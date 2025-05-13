@@ -68,7 +68,10 @@ CREATE TABLE TOOL(
 	nameTool VARCHAR(100) NOT NULL,
 	stock SMALLINT NOT NULL CHECK (stock >= 0),
 	idCategory INT,
-	
+	pricePerDay MONEY NOT NULL,
+
+	CHECK (pricePerDay > 0),
+
 	FOREIGN KEY (idCategory) REFERENCES CATEGORY(idCategory)
 
 );
@@ -100,7 +103,6 @@ CREATE TABLE ORDERS(
 	FOREIGN KEY (idPaymethod) REFERENCES PAYMETHOD(idPaymethod)
 
 );
-
 
 
 CREATE TABLE DELIVERY(
