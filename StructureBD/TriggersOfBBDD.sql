@@ -20,9 +20,13 @@ BEGIN
 
 	DECLARE @reservationDate DATE = (SELECT O.reservationStart FROM ORDERS O WHERE O.idOrder = @idOrder)
 	
-	IF ()
+	IF (@depurateDate > @reservationDate OR @estimatedDate > @reservationDate OR @deliveryDate > @reservationDate)
 	BEGIN
 
+		print 'The date is bigger than the reservation limit'
+		
+		UPDATE ORDERS SET
+		ORDERS.
 		
 
 	END
