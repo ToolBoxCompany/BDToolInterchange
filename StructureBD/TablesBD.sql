@@ -20,7 +20,7 @@ CREATE TABLE CITY (
 	postalCode CHAR(5) NOT NULL,
 	idComunity INT,
 	province VARCHAR(100),
-	FOREIGN KEY idComunity REFERENCES idComunity(idComunity) 
+	FOREIGN KEY (idComunity) REFERENCES COMUNITY(idComunity) 
 
 );
 
@@ -35,7 +35,7 @@ CREATE TABLE DIRECTION (
 	idCity INT,
 	DoorNumber VARCHAR(5),
 	StairNumber VARCHAR(5),
-	FOREIGN KEY idCity REFERENCES idCity(idCity)
+	FOREIGN KEY (idCity) REFERENCES CITY(idCity)
 	
 );
 
@@ -47,13 +47,11 @@ CREATE TABLE USERS (
 	nameUser VARCHAR(40) NOT NULL,
 	firtSurname VARCHAR(40) NOT NULL,
 	lastSurname VARCHAR(40) NOT NULL,
-	dateOfBirth DATE NOT NULL,
+	dateOfBirth DATE NOT NULL CHECK (dateOfBirth <= GETDATE()),
 	isSeller BIT NOT NULL,
 	idDirection INT,
 
-	FOREIGN KEY idDirection REFERENCES idDirection(idDirection),
-
-	dateOfBirth DATE NOT NULL CHECK (dateOfBirth <= GETDATE())
+	FOREIGN KEY (idDirection) REFERENCES DIRECTION(idDirection),
 
 );
 
@@ -68,12 +66,11 @@ CREATE TABLE TOOL(
 
 	idTool INT IDENTITY PRIMARY KEY,
 	nameTool VARCHAR(100) NOT NULL,
-	stock SMALLINT NOT NULL,
+	stock SMALLINT NOT NULL CHECK (stock >= 0),
 	idCategory INT,
 	
-	FOREIGN KEY idCategory REFERENCES idCategory(idCategory)
+	FOREIGN KEY (idCategory) REFERENCES CATEGORY(idCategory)
 
-	stock SMALLINT NOT NULL CHECK (stock >= 0)
 );
 
 CREATE TABLE PAYMETHOD(
@@ -90,16 +87,15 @@ CREATE TABLE ORDERS(
 	idTool INT,
 	idPaymethod INT,
 	totalAmount smallmoney,
-	Quantity SMALLINT NOT NULL,
+	Quantity SMALLINT NOT NULL CHECK (Quantity > 0),
 	reservationStart DATE NOT NULL,
 	reservationEnd DATE NOT NULL,
 
-	FOREIGN KEY idUser REFERENCES idUser(idUser),
-	FOREIGN KEY idTool REFERENCES idTool(idTool),
-	FOREIGN KEY idPaymethod REFERENCES idPaymethod(idPaymethod),
+	CHECK (reservationEnd > reservationStart),
 
-	Quantity SMALLINT NOT NULL CHECK (Quantity > 0),
-	reservationEnd DATE NOT NULL CHECK (reservationEnd > reservationStart)
+	FOREIGN KEY (idUser) REFERENCES USERS(idUser),
+	FOREIGN KEY (idTool) REFERENCES TOOL(idTool),
+	FOREIGN KEY (idPaymethod) REFERENCES PAYMETHOD(idPaymethod)
 
 );
 
@@ -111,9 +107,10 @@ CREATE TABLE DELIVERY(
 	estimatedDate DATE NOT NULL,
 	deliveryDate DATE,
 
-	FOREIGN KEY idOrder REFERENCES idOrder(idOrder),
+	CHECK (deliveryDate > departureDate),
 
-	deliveryDate DATE CHECK (deliveryDate > departureDate)
+	FOREIGN KEY (idOrder) REFERENCES ORDERS(idOrder),
+
 
 );
 
@@ -124,15 +121,17 @@ CREATE TABLE ASSESSMENT(
 	mark CHAR(1) NOT NULL,
 	comment TEXT,
 
-	FOREIGN KEY idOrder REFERENCES idOrder(idOrder),
+	CHECK (mark BETWEEN '1' AND '5'),
 
-	mark CHAR(1) NOT NULL CHECK (mark BETWEEN '1' AND '5')
+	FOREIGN KEY (idOrder) REFERENCES ORDERS(idOrder)
 
 );
 
 --Inserts base de prueba.
 
 INSERT INTO COMUNITY (name) VALUES ('Andalucía');
+
+GO
 
 INSERT INTO CITY (name, postalCode, idComunity, province)
 VALUES 
@@ -141,6 +140,8 @@ VALUES
 	('Málaga', '29001', 1, 'Málaga'),
 	('Córdoba', '14001', 1, 'Córdoba');
 
+GO
+
 INSERT INTO DIRECTION (street, postalCode, Number, idCity, DoorNumber, StairNumber)
 VALUES 
 	('Calle Sol', '41001', 25, 1, '2B', 'A'),
@@ -148,27 +149,46 @@ VALUES
 	('Calle Larios', '29001', 15, 3, '3C', 'A'),
 	('Ronda de los Tejares', '14001', 8, 4, '2D', 'C');
 
+GO
+
 INSERT INTO USERS (nameUser, firtSurname, lastSurname, dateOfBirth, isSeller, idDirection)
 VALUES ('Juan', 'Pérez', 'Gómez', '1990-05-20', 1, 1);
+
+GO
 
 INSERT INTO USERS (nameUser, firtSurname, lastSurname, dateOfBirth, isSeller, idDirection)
 VALUES ('Lucía', 'Martínez', 'Rey', '1985-09-12', 0, 2);
 
+GO
+
 INSERT INTO USERS (nameUser, firtSurname, lastSurname, dateOfBirth, isSeller, idDirection)
 VALUES ('Carlos', 'Fernández', 'López', '1993-03-05', 1, 3);
+
+GO
 
 INSERT INTO USERS (nameUser, firtSurname, lastSurname, dateOfBirth, isSeller, idDirection)
 VALUES ('Ana', 'García', 'Morales', '2000-07-30', 0, 4);
 
+GO
+
 INSERT INTO CATEGORY (nameCategory) VALUES ('Jardinería');
+
+GO
+
 INSERT INTO CATEGORY (nameCategory) VALUES ('Carpintería');
+
+GO
 
 INSERT INTO TOOL (nameTool, idCategory, stock)
 VALUES ('Cortacésped eléctrico', 1, 3);
 
+GO
+
 INSERT INTO TOOL (nameTool, idCategory, stock) VALUES 
 	('Taladro inalámbrico', 2 , 5),
 	('Lijadora eléctrica', 2, 2);
+
+GO
 
 INSERT INTO PAYMETHOD (namePaymethod)
 VALUES 
@@ -176,6 +196,8 @@ VALUES
 	('Bizum'),
 	('Efectivo'),
 	('Transferencia');
+
+GO
 
 INSERT INTO ORDERS (idUser, idTool, idPaymethod, totalAmount, Quantity, reservationStart, reservationEnd)
 VALUES 
@@ -185,6 +207,8 @@ VALUES
 	(4, 3, 1, 59.95, 1, '2025-05-16', '2025-05-18'),
 	(4, 2, 2, 44.50, 1, '2025-05-18', '2025-05-21');
 
+GO
+
 INSERT INTO DELIVERY (idOrder, departureDate, estimatedDate, deliveryDate) VALUES 
 	(1, '2025-05-10', '2025-05-12', '2025-05-11'),
 	(2, '2025-05-11', '2025-05-13', '2025-05-12'),
@@ -192,8 +216,10 @@ INSERT INTO DELIVERY (idOrder, departureDate, estimatedDate, deliveryDate) VALUE
 	(4, '2025-05-13', '2025-05-15', '2025-05-14'),
 	(5, '2025-05-13', '2025-05-15', '2025-05-14');
 
+GO
+
 INSERT INTO ASSESSMENT (idOrder, mark, comment) VALUES
-	(1, '5', 'Herramienta en excelentes condiciones. Muy recomendable.')
+	(1, '5', 'Herramienta en excelentes condiciones. Muy recomendable.'),
 	(2, '4', 'Buen estado, pero faltaba una pieza menor.'),
 	(3, '5', 'Perfecto funcionamiento y entrega rápida.'),
 	(4, '3', 'Cumple su función, aunque algo usada.'),
