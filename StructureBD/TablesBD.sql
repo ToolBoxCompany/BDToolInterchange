@@ -47,6 +47,8 @@ CREATE TABLE USERS (
 	nameUser VARCHAR(40) NOT NULL,
 	firtSurname VARCHAR(40) NOT NULL,
 	lastSurname VARCHAR(40) NOT NULL,
+	mail VARCHAR(100) NOT NULL,
+	phoneNumber CHAR(9) NOT NULL CHECK (phoneNumber NOT LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
 	dateOfBirth DATE NOT NULL CHECK (dateOfBirth <= GETDATE()),
 	isSeller BIT NOT NULL,
 	idDirection INT,
