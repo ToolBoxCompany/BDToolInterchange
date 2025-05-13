@@ -90,14 +90,18 @@ CREATE TABLE ORDERS(
 	Quantity SMALLINT NOT NULL CHECK (Quantity > 0),
 	reservationStart DATE NOT NULL,
 	reservationEnd DATE NOT NULL,
+	orderStatus VARCHAR(9) NOT NULL DEFAULT 'New',
 
 	CHECK (reservationEnd > reservationStart),
+	CHECK (orderStatus IN ('New','Paid','Cancelled','Sended','Returned','Closed')),
 
 	FOREIGN KEY (idUser) REFERENCES USERS(idUser),
 	FOREIGN KEY (idTool) REFERENCES TOOL(idTool),
 	FOREIGN KEY (idPaymethod) REFERENCES PAYMETHOD(idPaymethod)
 
 );
+
+
 
 CREATE TABLE DELIVERY(
 
