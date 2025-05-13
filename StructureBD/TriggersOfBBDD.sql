@@ -1,6 +1,3 @@
-SELECT * FROM DELIVERY
-GO
-
 CREATE OR ALTER TRIGGER EstimatedDateCalculation
 ON DELIVERY INSTEAD OF INSERT
 AS
@@ -15,8 +12,8 @@ BEGIN
 	SET @idOrder = (SELECT inserted.idOrder FROM inserted)
 	SET @idDelivery = (SELECT inserted.idDelivery FROM inserted)
 	SET @depurateDate = (SELECT inserted.departureDate FROM inserted)
-	SET @estimatedDate = (SELECT inserted.idOrder FROM inserted)
-	SET @deliveryDate = (SELECT inserted.idOrder FROM inserted)
+	SET @estimatedDate = (SELECT inserted.estimatedDate FROM inserted)
+	SET @deliveryDate = (SELECT inserted.deliveryDate FROM inserted)
 
 	DECLARE @reservationDate DATE = (SELECT O.reservationStart FROM ORDERS O WHERE O.idOrder = @idOrder)
 	
@@ -81,11 +78,12 @@ BEGIN
 	DECLARE @quantity SMALLINT = (SELECT inserted.Quantity FROM inserted)
 	DECLARE @reservationStart DATE = (SELECT inserted.reservationStart FROM inserted)
 	DECLARE @reservationEnd DATE = (SELECT inserted.reservationEnd FROM inserted)
+	DECLARE @nameTool VARCHAR(100) = (SELECT T.nameTool FROM TOOL T WHERE idTool = @idTool)
 	
 	IF (SELECT COUNT(*) FROM ORDERS O WHERE O.idTool = @idTool AND O.orderStatus NOT IN ('Cancelled','Closed')) > (SELECT T.stock FROM TOOL T WHERE T.idTool = @idTool)
 	BEGIN
 
-		print 'You dont have stock of ' + (SELECT T.nameTool FROM TOOL T WHERE idTool = @idTool) + ' , so we cant make a order'
+		print 'You dont have stock of ' + @nameTool + ' , so we cant make a order'
 		return;
 
 	END
