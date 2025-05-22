@@ -61,6 +61,7 @@ BEGIN
 	totalAmount = ( ( @pricePerDay * @daysReserved ) * @quantity )
 	WHERE idOrder = @idOrder
 
+
 END -- Ajustamos el precio de la Order al precio real segun los datos de la bbdd.
 
 GO
@@ -80,7 +81,7 @@ BEGIN
 	DECLARE @reservationEnd DATE = (SELECT inserted.reservationEnd FROM inserted)
 	DECLARE @nameTool VARCHAR(100) = (SELECT T.nameTool FROM TOOL T WHERE idTool = @idTool)
 	
-	IF (SELECT COUNT(*) FROM ORDERS O WHERE O.idTool = @idTool AND O.orderStatus NOT IN ('Cancelled','Closed')) > (SELECT T.stock FROM TOOL T WHERE T.idTool = @idTool)
+	IF (SELECT COUNT(*) FROM ORDERS O WHERE O.idTool = @idTool AND O.orderStatus NOT IN ('Cancelled','Closed')) >= (SELECT T.stock FROM TOOL T WHERE T.idTool = @idTool)
 	BEGIN
 
 		print 'You dont have stock of ' + @nameTool + ' , so we cant make a order'

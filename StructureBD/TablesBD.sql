@@ -1,4 +1,4 @@
-CREATE DATABASE [TOOL_INTERCHANGE]
+create DATABASE [TOOL_INTERCHANGE]
 
 GO
 
@@ -48,7 +48,7 @@ CREATE TABLE USERS (
 	firtSurname VARCHAR(40) NOT NULL,
 	lastSurname VARCHAR(40) NOT NULL,
 	mail VARCHAR(100) NOT NULL,
-	phoneNumber CHAR(9) NOT NULL CHECK (phoneNumber NOT LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
+	phoneNumber CHAR(9) NOT NULL CHECK (phoneNumber LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
 	dateOfBirth DATE NOT NULL CHECK (dateOfBirth <= GETDATE()),
 	isSeller BIT NOT NULL,
 	idDirection INT,
@@ -159,23 +159,22 @@ VALUES
 
 GO
 
-INSERT INTO USERS (nameUser, firtSurname, lastSurname, dateOfBirth, isSeller, idDirection)
-VALUES ('Juan', 'Pérez', 'Gómez', '1990-05-20', 1, 1);
+INSERT INTO USERS (nameUser, firtSurname, lastSurname,mail,phoneNumber ,dateOfBirth, isSeller, idDirection)
+VALUES ('Juan', 'Pérez', 'Gómez','abc@gmail.com',666666666, '1990-05-20', 1, 1);
+
+GO
+INSERT INTO USERS (nameUser, firtSurname, lastSurname, mail,phoneNumber , dateOfBirth, isSeller, idDirection)
+VALUES ('Lucía', 'Martínez', 'Rey','def@gmail.com',777777777, '1985-09-12', 0, 2);
 
 GO
 
-INSERT INTO USERS (nameUser, firtSurname, lastSurname, dateOfBirth, isSeller, idDirection)
-VALUES ('Lucía', 'Martínez', 'Rey', '1985-09-12', 0, 2);
+INSERT INTO USERS (nameUser, firtSurname, lastSurname,mail,phoneNumber , dateOfBirth, isSeller, idDirection)
+VALUES ('Carlos', 'Fernández', 'López','ghi@gmail.com',888888888, '1993-03-05', 1, 3);
 
 GO
 
-INSERT INTO USERS (nameUser, firtSurname, lastSurname, dateOfBirth, isSeller, idDirection)
-VALUES ('Carlos', 'Fernández', 'López', '1993-03-05', 1, 3);
-
-GO
-
-INSERT INTO USERS (nameUser, firtSurname, lastSurname, dateOfBirth, isSeller, idDirection)
-VALUES ('Ana', 'García', 'Morales', '2000-07-30', 0, 4);
+INSERT INTO USERS (nameUser, firtSurname, lastSurname,mail,phoneNumber , dateOfBirth, isSeller, idDirection)
+VALUES ('Ana', 'García', 'Morales','jkl@gmail.com',999999999, '2000-07-30', 0, 4);
 
 GO
 
@@ -187,14 +186,14 @@ INSERT INTO CATEGORY (nameCategory) VALUES ('Carpintería');
 
 GO
 
-INSERT INTO TOOL (nameTool, idCategory, stock)
-VALUES ('Cortacésped eléctrico', 1, 3);
+INSERT INTO TOOL (nameTool, idCategory, stock,pricePerDay)
+VALUES ('Cortacésped eléctrico', 1, 3,5);
 
 GO
 
-INSERT INTO TOOL (nameTool, idCategory, stock) VALUES 
-	('Taladro inalámbrico', 2 , 5),
-	('Lijadora eléctrica', 2, 2);
+INSERT INTO TOOL (nameTool, idCategory, stock,pricePerDay) VALUES 
+	('Taladro inalámbrico', 2 , 5,3),
+	('Lijadora eléctrica', 2, 2,5);
 
 GO
 
@@ -209,7 +208,7 @@ GO
 
 INSERT INTO ORDERS (idUser, idTool, idPaymethod, totalAmount, Quantity, reservationStart, reservationEnd)
 VALUES 
-	(1, 1, 1, 49.99, 1, '2025-05-08', '2025-05-14'),
+	(1, 2, 1, 49.99, 1, '2025-05-08', '2025-05-14'),
 	(2, 2, 1, 39.99, 1, '2025-05-10', '2025-05-12'),
 	(2, 3, 2, 59.95, 1, '2025-05-13', '2025-05-15'),
 	(4, 3, 1, 59.95, 1, '2025-05-16', '2025-05-18'),
@@ -218,17 +217,26 @@ VALUES
 GO
 
 INSERT INTO DELIVERY (idOrder, departureDate, estimatedDate, deliveryDate) VALUES 
-	(1, '2025-05-10', '2025-05-12', '2025-05-11'),
-	(2, '2025-05-11', '2025-05-13', '2025-05-12'),
-	(3, '2025-05-12', '2025-05-14', '2025-05-13'),
-	(4, '2025-05-13', '2025-05-15', '2025-05-14'),
-	(5, '2025-05-13', '2025-05-15', '2025-05-14');
+	(2, '2025-05-10', '2025-05-12', '2025-05-11'),
+	(3, '2025-05-11', '2025-05-13', '2025-05-12'),
+	(4, '2025-05-12', '2025-05-14', '2025-05-13'),
+	(5, '2025-05-13', '2025-05-15', '2025-05-14'),
+	(6, '2025-05-13', '2025-05-15', '2025-05-14');
 
 GO
 
 INSERT INTO ASSESSMENT (idOrder, mark, comment) VALUES
-	(1, '5', 'Herramienta en excelentes condiciones. Muy recomendable.'),
-	(2, '4', 'Buen estado, pero faltaba una pieza menor.'),
-	(3, '5', 'Perfecto funcionamiento y entrega rápida.'),
-	(4, '3', 'Cumple su función, aunque algo usada.'),
-	(5, '5', 'Excelente herramienta, como nueva.');
+	(2, '5', 'Herramienta en excelentes condiciones. Muy recomendable.'),
+	(3, '4', 'Buen estado, pero faltaba una pieza menor.'),
+	(4, '5', 'Perfecto funcionamiento y entrega rápida.'),
+	(5, '3', 'Cumple su función, aunque algo usada.'),
+	(6, '5', 'Excelente herramienta, como nueva.');
+
+
+	select * from ORDERS
+	INSERT INTO ORDERS (idUser, idTool, idPaymethod, totalAmount, Quantity, reservationStart, reservationEnd)
+	VALUES 
+	(1, 5, 1, 49.99, 1, '2025-05-08', '2025-05-14');
+
+	INSERT INTO TOOL (nameTool, idCategory, stock,pricePerDay)
+	VALUES ('Mi pana el ', 1, 0,5);
